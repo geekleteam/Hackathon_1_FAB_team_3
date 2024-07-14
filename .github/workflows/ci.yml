@@ -21,6 +21,6 @@ jobs:
       run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
       
     - name: Build the Docker image
-      run: docker build -t hoangnv99/teamfab-frontend .
+      run: docker build -t hoangnv99/teamfab-frontend-2 .
     - name: Push to Dockerhub
-      run: docker push hoangnv99/teamfab-frontend:latest
+      run: docker push hoangnv99/teamfab-frontend-2:latest
