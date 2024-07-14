@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import Form from "./form";
 import { v4 as uuidv4 } from 'uuid';
-// import { getChatBotResponse } from "../api/chatbot";
-import { Bot } from 'lucide-react';
+// import { getChatBotResponse, getMermaidCode } from "../api/chatbot";
+import Mermaid from "./mermaid.jsx"
+import { Bot, CircleArrowRight } from 'lucide-react';
 
 const generateUUID = () => {
   const newId = uuidv4();
@@ -53,8 +54,59 @@ const getMockChatBotResponse = async (userId: string, reqId: string, query: stri
   });
 };
 
+const getMockMermaidCode = async () => {
+  return `
+graph TD
+    A[User] -->|Posts Updates| B[Web/Mobile App]
+    B --> C[Backend Server]
+    C --> D[API Gateway]
+    D --> E[Authentication Service]
+    D --> F[Post Service]
+    D --> G[User Service]
+    D --> H[Notification Service]
+    D --> I[Follow Service]
+    
+    F -->|Stores Data| J[MongoDB Database]
+    G -->|Stores Data| J[MongoDB Database]
+    I -->|Stores Data| J[MongoDB Database]
+    
+    F -->|Stores Media| K[AWS S3 Storage]
+    
+    E --> L[Auth Database]
+    
+    C --> M[Load Balancer]
+    M --> N[Web Servers]
+    M --> O[Cache]
+    
+    subgraph User Interactions
+        B
+    end
+    
+    subgraph Services
+        E
+        F
+        G
+        H
+        I
+    end
+    
+    subgraph Databases
+        J
+        L
+    end
+    
+    subgraph Infrastructure
+        M
+        N
+        O
+    end
+
+`
+}
+
 const ChatInterface: React.FC = () => {
   let newId = generateUUID();
+  const [chart, setChart] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [userId, setUserId] = useState(newId);
   const [prompts, setPrompts] = useState<{ id: string; text: string; response: string; }[]>([]);
@@ -64,6 +116,8 @@ const ChatInterface: React.FC = () => {
   const handleSubmit = async (query: string) => {
     console.log("Submitted query:", query);
     const reqId = uuidv4();
+
+    console.log('userId: ', userId, ", requestId: ", reqId);
     const newPrompt = {
       id: reqId,
       text: query,
@@ -83,6 +137,11 @@ const ChatInterface: React.FC = () => {
     setIsFetchingResponse(false);
   };
 
+  const getMermaidCode = async () => {
+    const response = await getMockMermaidCode();
+    setChart(response);
+  }
+
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
@@ -96,8 +155,8 @@ const ChatInterface: React.FC = () => {
     <div className="flex justify-center items-center h-screen">
       {/* chatbot */}
       <div className="flex flex-col items-start px-5 text-left justify-start pt-10 h-full w-1/2 bg-gray-200 relative">
-        <Bot size={48} color="#00f900" className="float-start"/>
-        <div ref={chatContainerRef} className="w-full px-4 md:px-0 pt-4" style={{ maxHeight: 'calc(70%)', transition: 'all 0.5s ease', overflowY: submitted ? "scroll": "hidden" }}>
+        <Bot size={48} color="#00f900" className="float-start" />
+        <div ref={chatContainerRef} className="w-full px-4 md:px-0 pt-4" style={{ maxHeight: 'calc(70%)', transition: 'all 0.5s ease', overflowY: submitted ? "scroll" : "hidden" }}>
           {!submitted && (
             <div className="w-full text-center mt-40">
               <span className="text-green-500 text-4xl font-normal font-Roboto my-8 md:my-4 sm:my-2">
@@ -131,15 +190,31 @@ const ChatInterface: React.FC = () => {
         </div>
         <div className="w-full absolute bottom-0 left-0">
           <Form onSubmit={handleSubmit} disabled={isFetchingResponse} />
+          {prompts.length > 2 &&
+            (<div className="w-full flex justify-center items-center mb-5">
+              <button
+                className="bg-green-500 hover:bg-green-700 text-white flex items-center justify-between font-bold py-2 px-10 rounded"
+                onClick={getMermaidCode}
+              >
+                Generate Solution
+                <CircleArrowRight size={24} color="#feffff" className="ml-3" />
+              </button>
+
+            </div>)
+          }
         </div>
       </div>
 
       {/* preview */}
-      <div className="w-1/2 bg-yellow-400">
-        {/* Add your preview content here */}
+      <div className="w-1/2 h-full flex justify-center items-center">
+        <Mermaid
+          graphDefinition={chart} />
       </div>
     </div>
   );
 };
+
+
+
 
 export default ChatInterface;
