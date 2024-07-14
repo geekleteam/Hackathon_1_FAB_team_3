@@ -9,6 +9,50 @@ const generateUUID = () => {
   return newId;
 };
 
+const predefinedConversation = [
+  {
+    user_input: "Can you help me with a system design solution for a software?",
+    model_output: "Sure, can you provide more details about the software you need the design solution for?",
+  },
+  {
+    user_input: "It's a social media platform where users can post updates and follow others.",
+    model_output: "Got it. Do you have a specific tech stack in mind for this platform?",
+  },
+  {
+    user_input: "I was thinking of using MERN stack for the development.",
+    model_output: "Great choice! How many users are you expecting to handle initially and in the future?",
+  },
+  {
+    user_input: "Initially, around 10,000 users, but we want to scale to millions eventually.",
+    model_output: "Understood. Do you have any preferences for the database and storage solutions?",
+  },
+  {
+    user_input: "I was considering MongoDB for the database and AWS S3 for storage.",
+    model_output: "Perfect. Would you like to discuss the architecture now or focus on specific components?",
+  }
+];
+
+const getMockChatBotResponse = async (userId: string, reqId: string, query: string) => {
+  const prompt = predefinedConversation.find((conv) => conv.user_input === query);
+  return new Promise<{ user_input: string, model_output: string, wantsToDraw: boolean }>((resolve) => {
+    setTimeout(() => {
+      if (prompt) {
+        resolve({
+          user_input: prompt.user_input,
+          model_output: prompt.model_output,
+          wantsToDraw: false
+        });
+      } else {
+        resolve({
+          user_input: query,
+          model_output: "I'm sorry, I don't have a response for that.",
+          wantsToDraw: false
+        });
+      }
+    }, 1000);
+  });
+};
+
 const ChatInterface: React.FC = () => {
   let newId = generateUUID();
   const [submitted, setSubmitted] = useState(false);
@@ -16,18 +60,6 @@ const ChatInterface: React.FC = () => {
   const [prompts, setPrompts] = useState<{ id: string; text: string; response: string; }[]>([]);
   const [isFetchingResponse, setIsFetchingResponse] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-
-  const getMockChatBotResponse = async (userId: string, reqId: string, query: string) => {
-    return new Promise<{ user_input: string, model_output: string, wantsToDraw: boolean }>((resolve) => {
-      setTimeout(() => {
-        resolve({
-          user_input: query,
-          model_output: "Sure, what components do you have in mind?",
-          wantsToDraw: false
-        });
-      }, 1000);
-    });
-  };
 
   const handleSubmit = async (query: string) => {
     console.log("Submitted query:", query);
@@ -88,7 +120,7 @@ const ChatInterface: React.FC = () => {
                     <strong className="text-green-500">You:</strong> {prompt.text}
                   </div>
                   {prompt.response && (
-                    <div className="bg-gray-200 p-4 rounded-lg rounded-tl-none shadow-md self-start text-left w-max max-w-full break-words mr-auto">
+                    <div className="bg-gray-100 p-4 rounded-lg rounded-tl-none shadow-md self-start text-left w-max max-w-full break-words mr-auto">
                       <strong className="text-purple-600">Bot:</strong> {prompt.response}
                     </div>
                   )}
