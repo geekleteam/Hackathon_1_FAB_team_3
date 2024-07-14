@@ -73,9 +73,9 @@ const ChatInterface: React.FC = () => {
             </div>
           )}
           {submitted && (
-            <section className="flex flex-col mt-4 space-y-4">
+            <section className="flex flex-col space-y-4">
               {prompts.map((prompt) => (
-                <div key={prompt.id} className="flex flex-col space-y-10">
+                <div key={prompt.id} className="flex flex-col space-y-5">
                   <div className="bg-gray-100 p-4 rounded-lg rounded-tr-none shadow-md self-end text-right w-max max-w-full break-words ml-auto">
                     <strong className="text-green-500">You:</strong> {prompt.text}
                   </div>
