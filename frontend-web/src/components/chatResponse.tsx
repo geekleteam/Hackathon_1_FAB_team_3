@@ -1,12 +1,19 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useLocation } from "react-router-dom";
 import Form from "./form";
+import { v4 as uuidv4 } from 'uuid';
+import { getChatBotResponse } from "../api/chatbot";
 
 interface Prompt {
   id: number;
   text: string;
   response: string;
 }
+
+const useQuery = () => {
+  const { search } = useLocation();
+  return new URLSearchParams(search);
+};
 
 // const prompts: Prompt[] = [
 //   {
@@ -23,22 +30,33 @@ interface Prompt {
 // ];
 
 const ChatResponse: React.FC = () => {
+  const urlQuery = useQuery();
   const [submitted, setSubmitted] = useState(false);
   const [prompts, setPrompts] = useState([])
 
   const { id } = useParams<{ id?: string }>();
 
   const handleSubmit = async (query: string) => {
-    console.log("Submitted query:", query);
-    console.log(id);
-    if(prompts){}
-    // const newPromptResponse = await getChatBotResponse()
-    const newPrompt = {
+    let userId = id;
+    console.log('UserID: ', userId, '\nPrompt: ', query)
+    
+    const reqId = uuidv4();
 
+    const chatBotResp = await getChatBotResponse(userId, reqId, query);
+
+    const prompt = {
+      
     }
+    
+   
     setSubmitted(true);
   };
 
+
+  useEffect(() => {
+    let userQuery = urlQuery.get('query') || '';
+    handleSubmit(userQuery);
+  }, [])
 
 
   return (
