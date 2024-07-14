@@ -9,11 +9,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    # CI pipeline
+
     steps:
     - uses: actions/checkout@v3
-  
-    - name: Navigate to backend directory
+    - name: Navigate to frontend directory
       run: cd frontend-web
     - name: Login Dockerhub
       env:
