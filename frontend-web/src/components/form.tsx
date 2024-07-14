@@ -5,9 +5,10 @@ import SendIcon from "./icons/send";
 
 interface FormData {
   onSubmit: (query: string) => void;
+  disabled: any
 }
 
-const Form: React.FC<FormData> = ({ onSubmit }) => {
+const Form: React.FC<FormData> = ({ onSubmit, disabled }) => {
   const [userId, setUserId] = useState('');
   const [query, setQuery] = useState("I need a solution on authentication");
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const Form: React.FC<FormData> = ({ onSubmit }) => {
           onChange={e => {setQuery(e.target.value)}}
           className="appearance-none bg-[#F3F5F4] border-none w-full rounded-full text-gray-700 py-4 px-4 md:px-2 md:pl-4  leading-tight focus:outline-none"
           required
+          disabled={disabled}
         />
         <button
           type="submit"

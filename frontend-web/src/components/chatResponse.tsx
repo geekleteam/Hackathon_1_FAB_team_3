@@ -76,7 +76,7 @@ const ChatResponse: React.FC = () => {
           </div>
         </>
       ))}
-      <Form onSubmit={handleSubmit} />
+      {/* <Form onSubmit={handleSubmit} /> */}
     </div>
   );
 };

@@ -14,6 +14,7 @@ const ChatInterface: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [userId, setUserId] = useState(newId);
   const [prompts, setPrompts] = useState<{ id: string; text: string; response: string; }[]>([]);
+  const [isFetchingResponse, setIsFetchingResponse] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const getMockChatBotResponse = async (userId: string, reqId: string, query: string) => {
@@ -36,11 +37,18 @@ const ChatInterface: React.FC = () => {
       text: query,
       response: ""
     };
-    // const chatBotResp = await getChatBotResponse(userId, reqId, query);
-    const chatBotResp = await getMockChatBotResponse(userId, reqId, query);
-    newPrompt.response = chatBotResp.model_output;
     setPrompts([...prompts, newPrompt]);
     setSubmitted(true);
+    setIsFetchingResponse(true);
+
+    // Fetch the chatbot response
+    const chatBotResp = await getMockChatBotResponse(userId, reqId, query);
+    setPrompts(prevPrompts =>
+      prevPrompts.map(prompt =>
+        prompt.id === reqId ? { ...prompt, response: chatBotResp.model_output } : prompt
+      )
+    );
+    setIsFetchingResponse(false);
   };
 
   useEffect(() => {
@@ -79,16 +87,18 @@ const ChatInterface: React.FC = () => {
                   <div className="bg-gray-100 p-4 rounded-lg rounded-tr-none shadow-md self-end text-right w-max max-w-full break-words ml-auto">
                     <strong className="text-green-500">You:</strong> {prompt.text}
                   </div>
-                  <div className="bg-gray-100 p-4 rounded-lg rounded-tl-none shadow-md self-start text-left w-max max-w-full break-words mr-auto">
-                    <strong className="text-purple-600">Bot:</strong> {prompt.response}
-                  </div>
+                  {prompt.response && (
+                    <div className="bg-gray-200 p-4 rounded-lg rounded-tl-none shadow-md self-start text-left w-max max-w-full break-words mr-auto">
+                      <strong className="text-purple-600">Bot:</strong> {prompt.response}
+                    </div>
+                  )}
                 </div>
               ))}
             </section>
           )}
         </div>
         <div className="w-full absolute bottom-0 left-0">
-          <Form onSubmit={handleSubmit} />
+          <Form onSubmit={handleSubmit} disabled={isFetchingResponse} />
         </div>
       </div>
 

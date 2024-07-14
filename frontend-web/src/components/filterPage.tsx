@@ -32,7 +32,7 @@ const FilterPage: React.FC = () => {
         </p>
         <p className="py-2">Filter table by</p>
       </div>
-      <Form onSubmit={handleSubmit} />
+      {/* <Form onSubmit={handleSubmit} /> */}
     </div>
   );
 };
