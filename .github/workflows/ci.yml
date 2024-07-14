@@ -12,8 +12,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Navigate to frontend directory
-      run: cd frontend-web
+    # - name: Navigate to frontend directory
+    #   run: cd frontend-web
     - name: Login Dockerhub
       env:
         DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
