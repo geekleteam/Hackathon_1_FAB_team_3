@@ -116,11 +116,11 @@ const ChatInterface: React.FC = () => {
             <section className="flex flex-col space-y-4">
               {prompts.map((prompt) => (
                 <div key={prompt.id} className="flex flex-col space-y-5">
-                  <div className="bg-gray-100 p-4 text-sm rounded-lg rounded-tr-none shadow-md self-end text-right w-max max-w-full break-words ml-auto">
+                  <div className="bg-gray-100 p-4 text-sm rounded-lg rounded-tr-none shadow-md self-end text-left w-max max-w-full break-words ml-auto max-w-[60%]">
                     <strong className="text-green-500">You:</strong> {prompt.text}
                   </div>
                   {prompt.response && (
-                    <div className="bg-gray-100 p-4 text-sm rounded-lg rounded-tl-none shadow-md self-start text-left w-max max-w-full break-words mr-auto">
+                    <div className="bg-gray-100 p-4 text-sm rounded-lg rounded-tl-none shadow-md self-start text-left w-max max-w-full break-words mr-auto max-w-[60%]">
                       <strong className="text-purple-600">Bot:</strong> {prompt.response}
                     </div>
                   )}
