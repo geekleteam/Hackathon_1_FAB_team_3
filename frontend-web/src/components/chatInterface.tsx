@@ -177,9 +177,9 @@ const ChatInterface: React.FC = () => {
                 <p className="text-xs text-gray-500">I want a design of a Pizza Delivery System</p>
               </button>
               <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                onClick={() => handleSubmit(`I want the system design of Instagram with basic features.`)}
+                onClick={() => handleSubmit(`I want the system design of a Social Media Platform.`)}
               >
-                <p className="text-xs text-gray-500">I want the system design of Instagram with basic features.</p>
+                <p className="text-xs text-gray-500">I want the system design of a Social Media Platform.</p>
               </button>
               <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
                 onClick={() => handleSubmit(`Give me a design for an authentication system`)}
@@ -229,7 +229,15 @@ const ChatInterface: React.FC = () => {
 
       {/* preview */}
       {isFetchingMermaidCode ?
-        <div className="w-2/3 h-full flex justify-center items-center">Loading...</div>
+        <div className="w-2/3 h-full bg-gray-100 flex justify-center items-center">
+          <div
+            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-success motion-reduce:animate-[spin_1.5s_linear_infinite]"
+            role="status">
+            <span
+              className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+            >Loading...</span>
+          </div>
+        </div>
         :
         <>
           {chart.length == 0 ?
