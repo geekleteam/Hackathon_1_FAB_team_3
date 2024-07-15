@@ -112,6 +112,7 @@ const ChatInterface: React.FC = () => {
   const [prompts, setPrompts] = useState<{ id: string; text: string; response: string; }[]>([]);
   const [isFetchingResponse, setIsFetchingResponse] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [isFetchingMermaidCode, setIsFetchingMermaidCode] = useState(false);
 
   const handleSubmit = async (query: string) => {
     console.log("Submitted query:", query);
@@ -131,7 +132,9 @@ const ChatInterface: React.FC = () => {
     const chatBotResp = await getChatBotResponse(userId, reqId, query);
     const wantsToDraw = chatBotResp?.wantsToDraw
 
-    if(wantsToDraw)getMermaidCodeResponse();
+    if (wantsToDraw) {
+      getMermaidCodeResponse();
+    }
 
     setPrompts(prevPrompts =>
       prevPrompts.map(prompt =>
@@ -142,10 +145,12 @@ const ChatInterface: React.FC = () => {
   };
 
   const getMermaidCodeResponse = async () => {
+    setIsFetchingMermaidCode(true)
     let response = await getMermaidCode(userId);
     let mermaidCode = response.mermaid_code;
     mermaidCode = mermaidCode.replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\'/g, "'")
     setChart(mermaidCode);
+    setIsFetchingMermaidCode(false);
   }
 
   useEffect(() => {
@@ -160,11 +165,11 @@ const ChatInterface: React.FC = () => {
   return (
     <div className="flex justify-center items-center h-screen">
       {/* chatbot */}
-      <div className="flex flex-col items-start px-5 text-left justify-start pt-10 h-full w-1/2 bg-gray-200 relative">
+      <div className="flex flex-col items-start px-5 text-left justify-start pt-10 h-full w-1/3 bg-gray-200 relative">
         <Bot size={48} color="#00f900" className="float-start" />
         <div ref={chatContainerRef} className="w-full px-4 md:px-0 pt-4" style={{ maxHeight: 'calc(70%)', transition: 'all 0.5s ease', overflowY: submitted ? "scroll" : "hidden" }}>
           {!submitted && (
-            <div className="w-full text-center mt-40">
+            <div className="w-full text-center mt-60">
               <span className="text-green-500 text-4xl font-normal font-Roboto my-8 md:my-4 sm:my-2">
                 Hola,
               </span>
@@ -196,7 +201,7 @@ const ChatInterface: React.FC = () => {
         </div>
         <div className="w-full absolute bottom-0 left-0">
           <Form onSubmit={handleSubmit} disabled={isFetchingResponse} />
-          {prompts.length > 2 &&
+          {!isFetchingResponse && prompts.length > 2 &&
             (<div className="w-full flex justify-center items-center mb-5">
               <button
                 className="bg-green-500 hover:bg-green-700 text-white flex items-center justify-between font-bold py-2 px-10 rounded"
@@ -212,10 +217,51 @@ const ChatInterface: React.FC = () => {
       </div>
 
       {/* preview */}
-      <div className="w-1/2 h-full flex justify-center items-center">
-        <Mermaid
-          graphDefinition={chart} />
-      </div>
+      {isFetchingMermaidCode ?
+       <div className="w-2/3 h-full flex justify-center items-center">Loading...</div>
+        :
+        <>
+          {chart.length == 0 ?
+            <div className="w-2/3 h-full flex-col justify-center items-center">
+              <Mermaid
+                graphDefinition={`
+graph TD
+    A[Root]
+    A --> B1[Child 1]
+    A --> B2[Child 2]
+    B1 --> C1[Child 1.1]
+    B1 --> C2[Child 1.2]
+    B2 --> C3[Child 2.1]
+    B2 --> C4[Child 2.2]
+    C1 --> D1[Child 1.1.1]
+    C1 --> D2[Child 1.1.2]
+    C2 --> D3[Child 1.2.1]
+    C2 --> D4[Child 1.2.2]
+    C3 --> D5[Child 2.1.1]
+    C3 --> D6[Child 2.1.2]
+    C4 --> D7[Child 2.2.1]
+    C4 --> D8[Child 2.2.2]
+    D1 --> E1[Child 1.1.1.1]
+    D2 --> E2[Child 1.1.2.1]
+    D3 --> E3[Child 1.2.1.1]
+    D4 --> E4[Child 1.2.2.1]
+    D5 --> E5[Child 2.1.1.1]
+    D6 --> E6[Child 2.1.2.1]
+    D7 --> E7[Child 2.2.1.1]
+    D8 --> E8[Child 2.2.2.1]
+
+
+                          `}
+              />
+            </div>
+            :
+            <div className="w-2/3 h-full flex justify-center items-center">
+              <Mermaid
+                graphDefinition={chart} />
+            </div>
+          }
+        </>}
+
     </div>
   );
 };
