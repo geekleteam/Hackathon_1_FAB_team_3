@@ -99,7 +99,7 @@ const Mermaid = ({ graphDefinition, getMermaidCodeResponse }) => {
           <TransformComponent>
             <div
               id="output-container"
-              className="p-4 bg-white rounded-md shadow-md overflow-auto"
+              className="p-4 bg-gray-100 rounded-md shadow-md overflow-auto"
               style={{ minHeight: '100vh', minWidth: '70vw', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
             >
               <DraggableDiagram>
