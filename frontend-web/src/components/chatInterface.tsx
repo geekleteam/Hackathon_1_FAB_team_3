@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Form from "./form";
 import { v4 as uuidv4 } from 'uuid';
-// import { getChatBotResponse, getMermaidCode } from "../api/chatbot";
+import { getChatBotResponse, getMermaidCode } from "../api/chatbot";
 import Mermaid from "./mermaid.jsx"
 import { Bot, CircleArrowRight } from 'lucide-react';
 
@@ -128,7 +128,11 @@ const ChatInterface: React.FC = () => {
     setIsFetchingResponse(true);
 
     // Fetch the chatbot response
-    const chatBotResp = await getMockChatBotResponse(userId, reqId, query);
+    const chatBotResp = await getChatBotResponse(userId, reqId, query);
+    const wantsToDraw = chatBotResp?.wantsToDraw
+
+    if(wantsToDraw)getMermaidCodeResponse();
+
     setPrompts(prevPrompts =>
       prevPrompts.map(prompt =>
         prompt.id === reqId ? { ...prompt, response: chatBotResp.model_output } : prompt
@@ -137,9 +141,11 @@ const ChatInterface: React.FC = () => {
     setIsFetchingResponse(false);
   };
 
-  const getMermaidCode = async () => {
-    const response = await getMockMermaidCode();
-    setChart(response);
+  const getMermaidCodeResponse = async () => {
+    let response = await getMermaidCode(userId);
+    let mermaidCode = response.mermaid_code;
+    mermaidCode = mermaidCode.replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\'/g, "'")
+    setChart(mermaidCode);
   }
 
   useEffect(() => {
@@ -194,7 +200,7 @@ const ChatInterface: React.FC = () => {
             (<div className="w-full flex justify-center items-center mb-5">
               <button
                 className="bg-green-500 hover:bg-green-700 text-white flex items-center justify-between font-bold py-2 px-10 rounded"
-                onClick={getMermaidCode}
+                onClick={getMermaidCodeResponse}
               >
                 Generate Solution
                 <CircleArrowRight size={24} color="#feffff" className="ml-3" />
