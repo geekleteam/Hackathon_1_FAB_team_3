@@ -54,7 +54,7 @@ const ChatMarkdown: React.FC = () => {
         </div>
       </div>
       
-      <Form onSubmit={handleSubmit} />
+      {/* <Form onSubmit={handleSubmit} /> */}
     </div>
   );
 };

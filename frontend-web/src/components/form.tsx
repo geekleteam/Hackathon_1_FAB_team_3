@@ -1,40 +1,35 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SendIcon from "./icons/send";
-import { v4 as uuidv4 } from 'uuid';
+
 
 interface FormData {
   onSubmit: (query: string) => void;
+  disabled: any
 }
 
-const Form: React.FC<FormData> = ({ onSubmit }) => {
+const Form: React.FC<FormData> = ({ onSubmit, disabled }) => {
   const [userId, setUserId] = useState('');
-  const [query, setQuery] = useState("I need a solution on authentication");
+  const [query, setQuery] = useState("Can you help me with a system design solution for a software?");
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setQuery("")
     onSubmit(query);
-    generateUUID();
-    // // Navigate to the new page with the text "testing"
-    navigate(`/response/${userId}`);
-  };
-
-  const generateUUID = () => {
-    const newId = uuidv4();
-    setUserId(newId);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto mt-8 mb-8 md:absolute md:bottom-0 md:left-0 md:right-0">
-      <div className="relative flex items-center rounded-full border-gray-200 py-2">
+    <form onSubmit={handleSubmit} className="w-full flex justify-center items-center px-10 mb-5">
+      <div className="relative flex items-center rounded-full border-gray-200 py-2 w-full">
         <input
           type="text"
           value={query}
           // readOnly
           onChange={e => {setQuery(e.target.value)}}
-          className="appearance-none bg-[#F3F5F4] border-none w-full rounded-full text-gray-700 py-4 px-4 md:px-2 md:pl-4 md:ml-16 leading-tight focus:outline-none"
+          className="appearance-none bg-[#F3F5F4] border-none w-full rounded-full text-gray-700 py-4 px-10 md:pl-4 leading-tight focus:outline-none"
           required
+          disabled={disabled}
         />
         <button
           type="submit"

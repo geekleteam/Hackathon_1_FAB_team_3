@@ -13,7 +13,6 @@ function App() {
       <Routes>
         {/* Redirect from root to chat-interface */}
         <Route path="/" element={<Navigate to="/chat-interface" />} />
-        
         <Route path="/chat-interface" element={<ChatInterface />} />
         <Route path="/response/:id" element={<ChatResponse />} />
         {/* <Route path="/chat-markdown/:id" element={<ChatMarkdown />} /> */}
