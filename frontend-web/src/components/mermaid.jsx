@@ -20,7 +20,7 @@ const DraggableDiagram = ({ children }) => {
   );
 };
 
-const Mermaid = ({ graphDefinition }) => {
+const Mermaid = ({ graphDefinition, getMermaidCodeResponse }) => {
   const zoomWrapperRef = useRef(null);
 
   useEffect(() => {
@@ -40,11 +40,26 @@ const Mermaid = ({ graphDefinition }) => {
     };
 
     const renderMermaid = () => {
-      const output = document.getElementById('output');
-      output.removeAttribute('data-processed');
-      window.mermaid.mermaidAPI.render('theGraph', graphDefinition, (svgCode) => {
-        output.innerHTML = svgCode;
-      });
+      try {
+        const output = document.getElementById('output');
+        output.removeAttribute('data-processed');
+        window.mermaid.mermaidAPI.render('theGraph', graphDefinition, (svgCode) => {
+          output.innerHTML = svgCode;
+          fitToBounds();
+        });
+      } catch (err) {
+        console.log(err);
+        getMermaidCodeResponse();
+      }
+    };
+
+    const fitToBounds = () => {
+      if (zoomWrapperRef.current) {
+        zoomWrapperRef.current.setTransform(0, 0, 2); // Set initial zoom to 2x
+        setTimeout(() => {
+          zoomWrapperRef.current.centerView(); // Center the view after setting the transform
+        }, 0);
+      }
     };
 
     loadMermaid();
@@ -79,12 +94,13 @@ const Mermaid = ({ graphDefinition }) => {
           ref={zoomWrapperRef}
           wheel={{ disabled: true }} // Disable default wheel zoom
           scale={{ maxScale: 10, minScale: 0.1 }} // Adjust the scale limits as needed
+          initialScale={2} // Set initial scale to 2x
         >
           <TransformComponent>
             <div
               id="output-container"
               className="p-4 bg-white rounded-md shadow-md overflow-auto"
-              style={{ maxHeight: '90vh', width: '48vw' }}
+              style={{ minHeight: '100vh', minWidth: '70vw', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
             >
               <DraggableDiagram>
                 <div id="output" />

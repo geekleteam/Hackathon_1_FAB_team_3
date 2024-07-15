@@ -143,12 +143,13 @@ const ChatInterface: React.FC = () => {
     );
     setIsFetchingResponse(false);
   };
+  console.log('currChart', chart);
 
   const getMermaidCodeResponse = async () => {
     setIsFetchingMermaidCode(true)
     let response = await getMermaidCode(userId);
     let mermaidCode = response.mermaid_code;
-    mermaidCode = mermaidCode.replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\'/g, "'")
+    mermaidCode = mermaidCode.replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\'/g, "'");
     setChart(mermaidCode);
     setIsFetchingMermaidCode(false);
   }
@@ -167,19 +168,29 @@ const ChatInterface: React.FC = () => {
       {/* chatbot */}
       <div className="flex flex-col items-start px-5 text-left justify-start pt-10 h-full w-1/3 bg-gray-200 relative">
         <Bot size={48} color="#00f900" className="float-start" />
-        <div ref={chatContainerRef} className="w-full px-4 md:px-0 pt-4" style={{ maxHeight: 'calc(70%)', transition: 'all 0.5s ease', overflowY: submitted ? "scroll" : "hidden" }}>
+        <div ref={chatContainerRef} className="no-scrollbar w-full px-4 md:px-0 pt-4" style={{ maxHeight: 'calc(70%)', transition: 'all 0.5s ease', overflowY: submitted ? "scroll" : "hidden" }}>
           {!submitted && (
-            <div className="w-full text-center mt-60">
-              <span className="text-green-500 text-4xl font-normal font-Roboto my-8 md:my-4 sm:my-2">
-                Hola,
-              </span>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-purple-600 h-16 px-2 text-4xl font-normal font-Roboto">
-                Engineer!
-              </span>
-              <br />
-              <div className="text-4xl font-normal text-[#767676] font-Roboto">
-                Need a Design Solution?
-              </div>
+            <div className="grid grid-cols-2 sm:mt-20 md:mt-40 gap-4">
+              <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                onClick={() => handleSubmit(`I want a design of a Pizza Delivery System`)}
+              >
+                <p className="text-xs text-gray-500">I want a design of a Pizza Delivery System</p>
+              </button>
+              <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                onClick={() => handleSubmit(`I want the system design of Instagram with basic features.`)}
+              >
+                <p className="text-xs text-gray-500">I want the system design of Instagram with basic features.</p>
+              </button>
+              <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                onClick={() => handleSubmit(`Give me a design for an authentication system`)}
+              >
+                <p className="text-xs text-gray-500">Give me a design for an authentication system</p>
+              </button>
+              <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                onClick={() => handleSubmit(`Give me an example diagram of a binary tree.`)}
+              >
+                <p className="text-xs text-gray-500">Give me an example diagram of a binary tree.</p>
+              </button>
             </div>
           )}
           {submitted && (
@@ -218,7 +229,7 @@ const ChatInterface: React.FC = () => {
 
       {/* preview */}
       {isFetchingMermaidCode ?
-       <div className="w-2/3 h-full flex justify-center items-center">Loading...</div>
+        <div className="w-2/3 h-full flex justify-center items-center">Loading...</div>
         :
         <>
           {chart.length == 0 ?
@@ -251,13 +262,16 @@ graph TD
     D8 --> E8[Child 2.2.2.1]
 
 
-                          `}
+`}
+                getMermaidCodeResponse={getMermaidCodeResponse}
               />
             </div>
             :
             <div className="w-2/3 h-full flex justify-center items-center">
               <Mermaid
-                graphDefinition={chart} />
+                graphDefinition={chart}
+                getMermaidCodeResponse={getMermaidCodeResponse}
+              />
             </div>
           }
         </>}

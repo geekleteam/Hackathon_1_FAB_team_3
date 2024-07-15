@@ -10,7 +10,7 @@ interface FormData {
 
 const Form: React.FC<FormData> = ({ onSubmit, disabled }) => {
   const [userId, setUserId] = useState('');
-  const [query, setQuery] = useState("Can you help me with a system design solution for a software?");
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
