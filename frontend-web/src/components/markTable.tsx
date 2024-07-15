@@ -39,7 +39,7 @@ const MarkTable: React.FC<MarkTableProps> = ({ data }) => {
     } else {
       try {
         const response = await fetch(
-          "https://fab-team.xyz:8443/generate-detailed-solution",
+          "http://18.237.155.139:8000/generate-detailed-solution",
           {
             method: "POST",
             headers: {
@@ -76,7 +76,7 @@ const MarkTable: React.FC<MarkTableProps> = ({ data }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://fab-team.xyz:8443/generate-solutions",
+          "http://18.237.155.139:8000/generate-solutions",
           {
             method: "POST",
             headers: {
