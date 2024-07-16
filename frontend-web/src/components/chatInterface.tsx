@@ -116,6 +116,7 @@ const ChatInterface: React.FC = () => {
   const [isFetchingResponse, setIsFetchingResponse] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isFetchingMermaidCode, setIsFetchingMermaidCode] = useState(false);
+  const [query, setQuery] = useState("");
 
   const handleSubmit = async (query: string) => {
     console.log("Submitted query:", query);
@@ -136,7 +137,11 @@ const ChatInterface: React.FC = () => {
     const wantsToDraw = chatBotResp?.wantsToDraw
 
     if (wantsToDraw) {
+      console.log("WantsToDraw", reqId, userId)
       getMermaidCodeResponse();
+    }
+    else {
+      console.log("doesn't want to draw", reqId, userId)
     }
 
     setPrompts(prevPrompts =>
@@ -172,7 +177,7 @@ const ChatInterface: React.FC = () => {
       <div className="flex flex-col items-start px-5 text-left justify-start pt-10 h-full w-1/3 bg-gray-200 relative">
         <Bot size={48} color="#00f900" className="float-start" />
         <div ref={chatContainerRef} className="no-scrollbar w-full px-4 md:px-0 pt-4" style={{ maxHeight: 'calc(70%)', transition: 'all 0.5s ease', overflowY: submitted ? "scroll" : "hidden" }}>
-          {!submitted && (
+          {/* {!submitted && (
             <div className="grid grid-cols-2 sm:mt-20 md:mt-40 gap-4">
               <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
                 onClick={() => handleSubmit(`Design the cloud architecture for a Real-Time Data Analytics Platform`)}
@@ -195,7 +200,7 @@ const ChatInterface: React.FC = () => {
                 <p className="text-xs text-gray-500">Give me a design for a Scalable API Gateway</p>
               </button>
             </div>
-          )}
+          )} */}
           {submitted && (
             <section className="flex flex-col space-y-4">
               {prompts.map((prompt) => (
@@ -214,12 +219,12 @@ const ChatInterface: React.FC = () => {
           )}
         </div>
         <div className="w-full absolute bottom-0 left-0">
-          <Form onSubmit={handleSubmit} disabled={isFetchingResponse} />
+          <Form onSubmit={handleSubmit} disabled={isFetchingResponse} query={query} setQuery={setQuery} />
           {!isFetchingResponse && prompts.length > 2 &&
             (<div className="w-full flex justify-center items-center mb-5">
               <button
                 className="bg-green-500 hover:bg-green-700 text-white flex items-center justify-between font-bold py-2 px-10 rounded"
-                onClick={getMermaidCodeResponse}
+                onClick={() => getMermaidCodeResponse()}
               >
                 Generate Solution
                 <CircleArrowRight size={24} color="#feffff" className="ml-3" />
@@ -227,6 +232,50 @@ const ChatInterface: React.FC = () => {
 
             </div>)
           }
+          {!submitted && query.length == 0 && (
+            <div className="w-full flex justify-center items-center">
+              <div className="grid grid-cols-2 sm:mt-5 md:-mt-4 mb-5 gap-4 w-3/4">
+                <button
+                  className="h-10 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                  onClick={() =>
+                    setQuery(
+                      `Design a Cloud Architecture`
+                    )
+                  }
+                >
+                  <p className="text-xs text-gray-500">Cloud Architecture</p>
+                </button>
+                <button
+                  className="h-10 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                  onClick={() =>
+                    setQuery(
+                      `Create a Component Diagram`
+                    )
+                  }
+                >
+                  <p className="text-xs text-gray-500">Component</p>
+                </button>
+                <button
+                  className="h-10 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                  onClick={() =>
+                    setQuery(
+                      `Provide a Sequence Diagram`
+                    )
+                  }
+                >
+                  <p className="text-xs text-gray-500">Sequence</p>
+                </button>
+                <button
+                  className="h-10 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                  onClick={() =>
+                    setQuery(`Design an ER Diagram`)
+                  }
+                >
+                  <p className="text-xs text-gray-500">ER Diagram</p>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -272,18 +321,18 @@ graph TD
     D7 --> E7[Child 2.2.1.1]
     D8 --> E8[Child 2.2.2.1]
 `}
-                // getMermaidCodeResponse={getMermaidCodeResponse}
-                // count={count}
-                // setCount={setCount}
+              // getMermaidCodeResponse={getMermaidCodeResponse}
+              // count={count}
+              // setCount={setCount}
               />
             </div>
             :
             <div className="w-2/3 h-full flex justify-center items-center">
               <Mermaid
                 graphDefinition={chart}
-                // getMermaidCodeResponse={getMermaidCodeResponse}
-                // count={count}
-                // setCount={setCount}
+              // getMermaidCodeResponse={getMermaidCodeResponse}
+              // count={count}
+              // setCount={setCount}
               />
             </div>
           }
