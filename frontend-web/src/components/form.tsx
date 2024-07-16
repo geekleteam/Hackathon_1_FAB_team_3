@@ -5,12 +5,14 @@ import SendIcon from "./icons/send";
 
 interface FormData {
   onSubmit: (query: string) => void;
-  disabled: any
+  disabled: any;
+  query: any;
+  setQuery: any;
 }
 
-const Form: React.FC<FormData> = ({ onSubmit, disabled }) => {
+const Form: React.FC<FormData> = ({ onSubmit, disabled, query, setQuery }) => {
   const [userId, setUserId] = useState('');
-  const [query, setQuery] = useState("");
+  // const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
