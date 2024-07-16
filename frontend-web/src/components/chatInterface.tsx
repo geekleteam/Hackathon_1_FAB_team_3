@@ -177,22 +177,22 @@ const ChatInterface: React.FC = () => {
               <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
                 onClick={() => handleSubmit(`Design the cloud architecture for a Real-Time Data Analytics Platform`)}
               >
-                <p className="text-xs text-gray-500">Design the cloud architecture for a Real-Time Data Analytics Platform</p>
+                <p className="text-xs text-gray-500">Cloud architecture</p>
               </button>
               <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
                 onClick={() => handleSubmit(`Create a component diagram for a Microservices-based E-commerce Application`)}
               >
-                <p className="text-xs text-gray-500">Create a component diagram for a Microservices-based E-commerce Application</p>
+                <p className="text-xs text-gray-500">Component</p>
               </button>
               <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
                 onClick={() => handleSubmit(`Provide a sequence diagram for a Serverless Event-Driven Workflow`)}
               >
-                <p className="text-xs text-gray-500">Provide a sequence diagram for a Serverless Event-Driven Workflow</p>
+                <p className="text-xs text-gray-500">Sequence</p>
               </button>
               <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
                 onClick={() => handleSubmit(`Give me a design for a Scalable API Gateway`)}
               >
-                <p className="text-xs text-gray-500">Give me a design for a Scalable API Gateway</p>
+                <p className="text-xs text-gray-500">Scalable API Gateway</p>
               </button>
             </div>
           )}
