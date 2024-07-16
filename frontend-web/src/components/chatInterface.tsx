@@ -136,6 +136,7 @@ const ChatInterface: React.FC = () => {
   const [isFetchingResponse, setIsFetchingResponse] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isFetchingMermaidCode, setIsFetchingMermaidCode] = useState(false);
+  const [query, setQuery] = useState("");
 
   const handleSubmit = async (query: string) => {
     console.log("Submitted query:", query);
@@ -156,7 +157,10 @@ const ChatInterface: React.FC = () => {
     const wantsToDraw = chatBotResp?.wantsToDraw;
 
     if (wantsToDraw) {
+      console.log("WantsToDraw", reqId, userId);
       getMermaidCodeResponse();
+    } else {
+      console.log("doesn't want to draw", reqId, userId);
     }
 
     setPrompts((prevPrompts) =>
@@ -205,6 +209,30 @@ const ChatInterface: React.FC = () => {
             overflowY: submitted ? "scroll" : "hidden",
           }}
         >
+          {/* {!submitted && (
+            <div className="grid grid-cols-2 sm:mt-20 md:mt-40 gap-4">
+              <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                onClick={() => handleSubmit(`Design the cloud architecture for a Real-Time Data Analytics Platform`)}
+              >
+                <p className="text-xs text-gray-500">Design the cloud architecture for a Real-Time Data Analytics Platform</p>
+              </button>
+              <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                onClick={() => handleSubmit(`Create a component diagram for a Microservices-based E-commerce Application`)}
+              >
+                <p className="text-xs text-gray-500">Create a component diagram for a Microservices-based E-commerce Application</p>
+              </button>
+              <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                onClick={() => handleSubmit(`Provide a sequence diagram for a Serverless Event-Driven Workflow`)}
+              >
+                <p className="text-xs text-gray-500">Provide a sequence diagram for a Serverless Event-Driven Workflow</p>
+              </button>
+              <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                onClick={() => handleSubmit(`Give me a design for a Scalable API Gateway`)}
+              >
+                <p className="text-xs text-gray-500">Give me a design for a Scalable API Gateway</p>
+              </button>
+            </div>
+          )} */}
           {submitted && (
             <section className="flex flex-col space-y-4">
               {prompts.map((prompt) => (
@@ -225,59 +253,49 @@ const ChatInterface: React.FC = () => {
           )}
         </div>
         <div className="w-full absolute bottom-0 left-0">
-          <Form onSubmit={handleSubmit} disabled={isFetchingResponse} />
+          <Form
+            onSubmit={handleSubmit}
+            disabled={isFetchingResponse}
+            query={query}
+            setQuery={setQuery}
+          />
           {!isFetchingResponse && prompts.length > 2 && (
             <div className="w-full flex justify-center items-center mb-5">
               <button
                 className="bg-green-500 hover:bg-green-700 text-white flex items-center justify-between font-bold py-2 px-10 rounded"
-                onClick={getMermaidCodeResponse}
+                onClick={() => getMermaidCodeResponse()}
               >
                 Generate Solution
                 <CircleArrowRight size={24} color="#feffff" className="ml-3" />
               </button>
             </div>
           )}
-
-          {!submitted && (
+          {!submitted && query.length == 0 && (
             <div className="w-full flex justify-center items-center">
               <div className="grid grid-cols-2 sm:mt-5 md:-mt-4 mb-5 gap-4 w-3/4">
                 <button
                   className="h-10 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                  onClick={() =>
-                    handleSubmit(
-                      `Design the cloud architecture for a Real-Time Data Analytics Platform`
-                    )
-                  }
+                  onClick={() => setQuery(`Design a Cloud Architecture`)}
                 >
-                  <p className="text-xs text-gray-500">Cloud architecture</p>
+                  <p className="text-xs text-gray-500">Cloud Architecture</p>
                 </button>
                 <button
                   className="h-10 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                  onClick={() =>
-                    handleSubmit(
-                      `Create a component diagram for a Microservices-based E-commerce Application`
-                    )
-                  }
+                  onClick={() => setQuery(`Create a Component Diagram`)}
                 >
                   <p className="text-xs text-gray-500">Component</p>
                 </button>
                 <button
                   className="h-10 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                  onClick={() =>
-                    handleSubmit(
-                      `Provide a sequence diagram for a Serverless Event-Driven Workflow`
-                    )
-                  }
+                  onClick={() => setQuery(`Provide a Sequence Diagram`)}
                 >
                   <p className="text-xs text-gray-500">Sequence</p>
                 </button>
                 <button
                   className="h-10 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                  onClick={() =>
-                    handleSubmit(`Give me a design for a Scalable API Gateway`)
-                  }
+                  onClick={() => setQuery(`Design an ER Diagram`)}
                 >
-                  <p className="text-xs text-gray-500">Scalable API Gateway</p>
+                  <p className="text-xs text-gray-500">ER Diagram</p>
                 </button>
               </div>
             </div>
@@ -327,21 +345,19 @@ graph TD
     D6 --> E6[Child 2.1.2.1]
     D7 --> E7[Child 2.2.1.1]
     D8 --> E8[Child 2.2.2.1]
-
-
 `}
-                getMermaidCodeResponse={getMermaidCodeResponse}
-                count={count}
-                setCount={setCount}
+                // getMermaidCodeResponse={getMermaidCodeResponse}
+                // count={count}
+                // setCount={setCount}
               />
             </div>
           ) : (
             <div className="w-2/3 h-full flex justify-center items-center">
               <Mermaid
                 graphDefinition={chart}
-                getMermaidCodeResponse={getMermaidCodeResponse}
-                count={count}
-                setCount={setCount}
+                // getMermaidCodeResponse={getMermaidCodeResponse}
+                // count={count}
+                // setCount={setCount}
               />
             </div>
           )}
