@@ -12,9 +12,10 @@ export async function getChatBotResponse(userId, reqId, query) {
 
 
 
-export async function getMermaidCode(userId){
+export async function getMermaidCode(userId, reqId){
     const payload = {
-        userID: userId
+        userID: userId,
+        requestID: reqId
     };
     const response = await axios.post('https://fab-team-services.xyz/generate-mermaid/', payload)
     if(response.data)return response.data;

@@ -25,7 +25,6 @@ const Form: React.FC<FormData> = ({ onSubmit, disabled }) => {
         <input
           type="text"
           value={query}
-          // readOnly
           onChange={e => {setQuery(e.target.value)}}
           className="appearance-none bg-[#F3F5F4] border-none w-full rounded-full text-gray-700 py-4 px-10 md:pl-4 leading-tight focus:outline-none"
           required
