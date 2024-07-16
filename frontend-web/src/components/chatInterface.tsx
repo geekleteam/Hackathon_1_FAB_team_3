@@ -271,21 +271,19 @@ graph TD
     D6 --> E6[Child 2.1.2.1]
     D7 --> E7[Child 2.2.1.1]
     D8 --> E8[Child 2.2.2.1]
-
-
 `}
-                getMermaidCodeResponse={getMermaidCodeResponse}
-                count={count}
-                setCount={setCount}
+                // getMermaidCodeResponse={getMermaidCodeResponse}
+                // count={count}
+                // setCount={setCount}
               />
             </div>
             :
             <div className="w-2/3 h-full flex justify-center items-center">
               <Mermaid
                 graphDefinition={chart}
-                getMermaidCodeResponse={getMermaidCodeResponse}
-                count={count}
-                setCount={setCount}
+                // getMermaidCodeResponse={getMermaidCodeResponse}
+                // count={count}
+                // setCount={setCount}
               />
             </div>
           }

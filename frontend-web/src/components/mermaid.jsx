@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, forwardRef } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { DndProvider, useDrag } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 
 const ItemTypes = {
   DIAGRAM: 'diagram',
@@ -20,42 +21,30 @@ const DraggableDiagram = ({ children }) => {
   );
 };
 
-const Mermaid = ({ graphDefinition, getMermaidCodeResponse, setCount, count }) => {
+// Forward ref to the TransformWrapper component
+const ForwardedTransformWrapper = forwardRef((props, ref) => (
+  <TransformWrapper ref={ref} {...props}>
+    {props.children}
+  </TransformWrapper>
+));
 
+const Mermaid = ({ graphDefinition }) => {
   const zoomWrapperRef = useRef(null);
+  const diagramRef = useRef(null);
 
   useEffect(() => {
-    const loadMermaid = async () => {
-      if (graphDefinition === '') return;
-      if (!window.mermaid) {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.3.0/mermaid.min.js';
-        script.onload = () => {
-          window.mermaid.mermaidAPI.initialize({ securityLevel: 'loose' });
-          renderMermaid();
-        };
-        document.body.appendChild(script);
-      } else {
-        renderMermaid();
-      }
+    const initializeMermaid = async () => {
+      mermaid.initialize({ startOnLoad: false });
+      mermaid.run(undefined, diagramRef.current);
     };
 
-    const renderMermaid = () => {
-      try {
-        const output = document.getElementById('output');
-        output.removeAttribute('data-processed');
-        window.mermaid.mermaidAPI.render('theGraph', graphDefinition, (svgCode) => {
-          output.innerHTML = svgCode;
-          fitToBounds();
-        });
-      } catch (err) {
-        setCount(count + 1);
-        console.log(err);
-        if (count < 3) {
-          getMermaidCodeResponse();
-        }
-      }
-    };
+    initializeMermaid();
+  }, []);
+
+  useEffect(() => {
+    if (graphDefinition) {
+      mermaid.contentLoaded();
+    }
 
     const fitToBounds = () => {
       if (zoomWrapperRef.current) {
@@ -66,7 +55,7 @@ const Mermaid = ({ graphDefinition, getMermaidCodeResponse, setCount, count }) =
       }
     };
 
-    loadMermaid();
+    fitToBounds();
   }, [graphDefinition]);
 
   useEffect(() => {
@@ -92,28 +81,34 @@ const Mermaid = ({ graphDefinition, getMermaidCodeResponse, setCount, count }) =
   if (graphDefinition === '') return <></>;
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="w-full h-screen flex items-center justify-center bg-gray-100">
-        <TransformWrapper
-          ref={zoomWrapperRef}
-          wheel={{ disabled: true }} // Disable default wheel zoom
-          scale={{ maxScale: 10, minScale: 0.1 }} // Adjust the scale limits as needed
-          initialScale={2} // Set initial scale to 2x
-        >
-          <TransformComponent>
-            <div
-              id="output-container"
-              className="p-4 bg-gray-100 rounded-md shadow-md overflow-auto"
-              style={{ minHeight: '100vh', minWidth: '70vw', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-            >
-              <DraggableDiagram>
-                <div id="output" />
-              </DraggableDiagram>
-            </div>
-          </TransformComponent>
-        </TransformWrapper>
-      </div>
-    </DndProvider>
+    <>
+      <DndProvider backend={HTML5Backend}>
+        <div className="w-full h-screen flex items-center justify-center bg-gray-100">
+          <TransformWrapper
+            ref={zoomWrapperRef}
+            wheel={{ disabled: true }} // Disable default wheel zoom
+            scale={{ maxScale: 10, minScale: 0.1 }} // Adjust the scale limits as needed
+            // initialScale={1.5} // Set initial scale to 2x
+          >
+            <TransformComponent>
+              <div
+                id="output-container"
+                className="p-4 bg-gray-100 rounded-md shadow-md overflow-auto"
+                style={{ minHeight: '100vh', minWidth: '70vw', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+              >
+                <DraggableDiagram>
+                  <div ref={diagramRef}>
+                    <div className="mermaid">
+                      {graphDefinition}
+                    </div>
+                  </div>
+                </DraggableDiagram>
+              </div>
+            </TransformComponent>
+          </TransformWrapper>
+        </div>
+      </DndProvider>
+    </>
   );
 };
 
