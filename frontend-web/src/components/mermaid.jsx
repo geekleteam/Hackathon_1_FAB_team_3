@@ -88,7 +88,7 @@ const Mermaid = ({ graphDefinition }) => {
             ref={zoomWrapperRef}
             wheel={{ disabled: true }} // Disable default wheel zoom
             scale={{ maxScale: 10, minScale: 0.1 }} // Adjust the scale limits as needed
-            // initialScale={1.5} // Set initial scale to 2x
+            // initialScale={1}
           >
             <TransformComponent>
               <div
@@ -98,7 +98,7 @@ const Mermaid = ({ graphDefinition }) => {
               >
                 <DraggableDiagram>
                   <div ref={diagramRef}>
-                    <div className="mermaid">
+                    <div className="mermaid" style={{minWidth: '50vw', minHeight: '30vh'}}>
                       {graphDefinition}
                     </div>
                   </div>
