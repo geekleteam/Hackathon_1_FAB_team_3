@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { DndProvider, useDrag } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -20,7 +20,8 @@ const DraggableDiagram = ({ children }) => {
   );
 };
 
-const Mermaid = ({ graphDefinition, getMermaidCodeResponse }) => {
+const Mermaid = ({ graphDefinition, getMermaidCodeResponse, setCount, count }) => {
+
   const zoomWrapperRef = useRef(null);
 
   useEffect(() => {
@@ -48,8 +49,11 @@ const Mermaid = ({ graphDefinition, getMermaidCodeResponse }) => {
           fitToBounds();
         });
       } catch (err) {
+        setCount(count + 1);
         console.log(err);
-        getMermaidCodeResponse();
+        if (count < 3) {
+          getMermaidCodeResponse();
+        }
       }
     };
 

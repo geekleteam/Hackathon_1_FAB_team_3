@@ -106,9 +106,12 @@ graph TD
 
 const ChatInterface: React.FC = () => {
   let newId = generateUUID();
+  let newReqId = generateUUID();
+  const [count, setCount] = useState(0);
   const [chart, setChart] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [userId, setUserId] = useState(newId);
+  const [reqId, setReqId] = useState(newReqId);
   const [prompts, setPrompts] = useState<{ id: string; text: string; response: string; }[]>([]);
   const [isFetchingResponse, setIsFetchingResponse] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -116,11 +119,11 @@ const ChatInterface: React.FC = () => {
 
   const handleSubmit = async (query: string) => {
     console.log("Submitted query:", query);
-    const reqId = uuidv4();
-
+    // const reqId = uuidv4();
+    const textId = uuidv4();
     console.log('userId: ', userId, ", requestId: ", reqId);
     const newPrompt = {
-      id: reqId,
+      id: textId,
       text: query,
       response: ""
     };
@@ -138,7 +141,7 @@ const ChatInterface: React.FC = () => {
 
     setPrompts(prevPrompts =>
       prevPrompts.map(prompt =>
-        prompt.id === reqId ? { ...prompt, response: chatBotResp.model_output } : prompt
+        prompt.id === textId ? { ...prompt, response: chatBotResp.model_output } : prompt
       )
     );
     setIsFetchingResponse(false);
@@ -147,7 +150,7 @@ const ChatInterface: React.FC = () => {
 
   const getMermaidCodeResponse = async () => {
     setIsFetchingMermaidCode(true)
-    let response = await getMermaidCode(userId);
+    let response = await getMermaidCode(userId, reqId);
     let mermaidCode = response.mermaid_code;
     mermaidCode = mermaidCode.replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\'/g, "'");
     setChart(mermaidCode);
@@ -172,24 +175,24 @@ const ChatInterface: React.FC = () => {
           {!submitted && (
             <div className="grid grid-cols-2 sm:mt-20 md:mt-40 gap-4">
               <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                onClick={() => handleSubmit(`I want a design of a Pizza Delivery System`)}
+                onClick={() => handleSubmit(`Design the cloud architecture for a Real-Time Data Analytics Platform`)}
               >
-                <p className="text-xs text-gray-500">I want a design of a Pizza Delivery System</p>
+                <p className="text-xs text-gray-500">Design the cloud architecture for a Real-Time Data Analytics Platform</p>
               </button>
               <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                onClick={() => handleSubmit(`I want the system design of a Social Media Platform.`)}
+                onClick={() => handleSubmit(`Create a component diagram for a Microservices-based E-commerce Application`)}
               >
-                <p className="text-xs text-gray-500">I want the system design of a Social Media Platform.</p>
+                <p className="text-xs text-gray-500">Create a component diagram for a Microservices-based E-commerce Application</p>
               </button>
               <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                onClick={() => handleSubmit(`Give me a design for an authentication system`)}
+                onClick={() => handleSubmit(`Provide a sequence diagram for a Serverless Event-Driven Workflow`)}
               >
-                <p className="text-xs text-gray-500">Give me a design for an authentication system</p>
+                <p className="text-xs text-gray-500">Provide a sequence diagram for a Serverless Event-Driven Workflow</p>
               </button>
               <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                onClick={() => handleSubmit(`Give me an example diagram of a binary tree.`)}
+                onClick={() => handleSubmit(`Give me a design for a Scalable API Gateway`)}
               >
-                <p className="text-xs text-gray-500">Give me an example diagram of a binary tree.</p>
+                <p className="text-xs text-gray-500">Give me a design for a Scalable API Gateway</p>
               </button>
             </div>
           )}
@@ -272,6 +275,8 @@ graph TD
 
 `}
                 getMermaidCodeResponse={getMermaidCodeResponse}
+                count={count}
+                setCount={setCount}
               />
             </div>
             :
@@ -279,6 +284,8 @@ graph TD
               <Mermaid
                 graphDefinition={chart}
                 getMermaidCodeResponse={getMermaidCodeResponse}
+                count={count}
+                setCount={setCount}
               />
             </div>
           }

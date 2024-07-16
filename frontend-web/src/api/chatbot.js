@@ -12,9 +12,10 @@ export async function getChatBotResponse(userId, reqId, query) {
 
 
 
-export async function getMermaidCode(userId){
+export async function getMermaidCode(userId, reqId){
     const payload = {
-        userID: userId
+        userID: userId,
+        requestID: reqId
     };
     const response = await axios.post('//18.237.155.139:8000/generate-mermaid', payload)
     if(response.data)return response.data;
