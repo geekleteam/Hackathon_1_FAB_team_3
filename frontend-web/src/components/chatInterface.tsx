@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import Form from "./form";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { getChatBotResponse, getMermaidCode } from "../api/chatbot";
-import Mermaid from "./mermaid.jsx"
-import { Bot, CircleArrowRight } from 'lucide-react';
+import Mermaid from "./mermaid.jsx";
+import { Bot, CircleArrowRight } from "lucide-react";
 
 const generateUUID = () => {
   const newId = uuidv4();
@@ -13,41 +13,59 @@ const generateUUID = () => {
 const predefinedConversation = [
   {
     user_input: "Can you help me with a system design solution for a software?",
-    model_output: "Sure, can you provide more details about the software you need the design solution for?",
+    model_output:
+      "Sure, can you provide more details about the software you need the design solution for?",
   },
   {
-    user_input: "It's a social media platform where users can post updates and follow others.",
-    model_output: "Got it. Do you have a specific tech stack in mind for this platform?",
+    user_input:
+      "It's a social media platform where users can post updates and follow others.",
+    model_output:
+      "Got it. Do you have a specific tech stack in mind for this platform?",
   },
   {
     user_input: "I was thinking of using MERN stack for the development.",
-    model_output: "Great choice! How many users are you expecting to handle initially and in the future?",
+    model_output:
+      "Great choice! How many users are you expecting to handle initially and in the future?",
   },
   {
-    user_input: "Initially, around 10,000 users, but we want to scale to millions eventually.",
-    model_output: "Understood. Do you have any preferences for the database and storage solutions?",
+    user_input:
+      "Initially, around 10,000 users, but we want to scale to millions eventually.",
+    model_output:
+      "Understood. Do you have any preferences for the database and storage solutions?",
   },
   {
-    user_input: "I was considering MongoDB for the database and AWS S3 for storage.",
-    model_output: "Perfect. Would you like to discuss the architecture now or focus on specific components?",
-  }
+    user_input:
+      "I was considering MongoDB for the database and AWS S3 for storage.",
+    model_output:
+      "Perfect. Would you like to discuss the architecture now or focus on specific components?",
+  },
 ];
 
-const getMockChatBotResponse = async (userId: string, reqId: string, query: string) => {
-  const prompt = predefinedConversation.find((conv) => conv.user_input === query);
-  return new Promise<{ user_input: string, model_output: string, wantsToDraw: boolean }>((resolve) => {
+const getMockChatBotResponse = async (
+  userId: string,
+  reqId: string,
+  query: string
+) => {
+  const prompt = predefinedConversation.find(
+    (conv) => conv.user_input === query
+  );
+  return new Promise<{
+    user_input: string;
+    model_output: string;
+    wantsToDraw: boolean;
+  }>((resolve) => {
     setTimeout(() => {
       if (prompt) {
         resolve({
           user_input: prompt.user_input,
           model_output: prompt.model_output,
-          wantsToDraw: false
+          wantsToDraw: false,
         });
       } else {
         resolve({
           user_input: query,
           model_output: "I'm sorry, I don't have a response for that.",
-          wantsToDraw: false
+          wantsToDraw: false,
         });
       }
     }, 1000);
@@ -101,18 +119,20 @@ graph TD
         O
     end
 
-`
-}
+`;
+};
 
 const ChatInterface: React.FC = () => {
   let newId = generateUUID();
   let newReqId = generateUUID();
   const [count, setCount] = useState(0);
-  const [chart, setChart] = useState('');
+  const [chart, setChart] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [userId, setUserId] = useState(newId);
   const [reqId, setReqId] = useState(newReqId);
-  const [prompts, setPrompts] = useState<{ id: string; text: string; response: string; }[]>([]);
+  const [prompts, setPrompts] = useState<
+    { id: string; text: string; response: string }[]
+  >([]);
   const [isFetchingResponse, setIsFetchingResponse] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isFetchingMermaidCode, setIsFetchingMermaidCode] = useState(false);
@@ -121,11 +141,11 @@ const ChatInterface: React.FC = () => {
     console.log("Submitted query:", query);
     // const reqId = uuidv4();
     const textId = uuidv4();
-    console.log('userId: ', userId, ", requestId: ", reqId);
+    console.log("userId: ", userId, ", requestId: ", reqId);
     const newPrompt = {
       id: textId,
       text: query,
-      response: ""
+      response: "",
     };
     setPrompts([...prompts, newPrompt]);
     setSubmitted(true);
@@ -133,35 +153,40 @@ const ChatInterface: React.FC = () => {
 
     // Fetch the chatbot response
     const chatBotResp = await getChatBotResponse(userId, reqId, query);
-    const wantsToDraw = chatBotResp?.wantsToDraw
+    const wantsToDraw = chatBotResp?.wantsToDraw;
 
     if (wantsToDraw) {
       getMermaidCodeResponse();
     }
 
-    setPrompts(prevPrompts =>
-      prevPrompts.map(prompt =>
-        prompt.id === textId ? { ...prompt, response: chatBotResp.model_output } : prompt
+    setPrompts((prevPrompts) =>
+      prevPrompts.map((prompt) =>
+        prompt.id === textId
+          ? { ...prompt, response: chatBotResp.model_output }
+          : prompt
       )
     );
     setIsFetchingResponse(false);
   };
-  console.log('currChart', chart);
+  console.log("currChart", chart);
 
   const getMermaidCodeResponse = async () => {
-    setIsFetchingMermaidCode(true)
+    setIsFetchingMermaidCode(true);
     let response = await getMermaidCode(userId, reqId);
     let mermaidCode = response.mermaid_code;
-    mermaidCode = mermaidCode.replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\'/g, "'");
+    mermaidCode = mermaidCode
+      .replace(/\\n/g, "\n")
+      .replace(/\\"/g, '"')
+      .replace(/\\'/g, "'");
     setChart(mermaidCode);
     setIsFetchingMermaidCode(false);
-  }
+  };
 
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
         top: chatContainerRef.current.scrollHeight,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
   }, [prompts]);
@@ -171,41 +196,27 @@ const ChatInterface: React.FC = () => {
       {/* chatbot */}
       <div className="flex flex-col items-start px-5 text-left justify-start pt-10 h-full w-1/3 bg-gray-200 relative">
         <Bot size={48} color="#00f900" className="float-start" />
-        <div ref={chatContainerRef} className="no-scrollbar w-full px-4 md:px-0 pt-4" style={{ maxHeight: 'calc(70%)', transition: 'all 0.5s ease', overflowY: submitted ? "scroll" : "hidden" }}>
-          {!submitted && (
-            <div className="grid grid-cols-2 sm:mt-20 md:mt-40 gap-4">
-              <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                onClick={() => handleSubmit(`Design the cloud architecture for a Real-Time Data Analytics Platform`)}
-              >
-                <p className="text-xs text-gray-500">Cloud architecture</p>
-              </button>
-              <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                onClick={() => handleSubmit(`Create a component diagram for a Microservices-based E-commerce Application`)}
-              >
-                <p className="text-xs text-gray-500">Component</p>
-              </button>
-              <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                onClick={() => handleSubmit(`Provide a sequence diagram for a Serverless Event-Driven Workflow`)}
-              >
-                <p className="text-xs text-gray-500">Sequence</p>
-              </button>
-              <button className="h-20 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
-                onClick={() => handleSubmit(`Give me a design for a Scalable API Gateway`)}
-              >
-                <p className="text-xs text-gray-500">Scalable API Gateway</p>
-              </button>
-            </div>
-          )}
+        <div
+          ref={chatContainerRef}
+          className="no-scrollbar w-full px-4 md:px-0 pt-4"
+          style={{
+            maxHeight: "calc(70%)",
+            transition: "all 0.5s ease",
+            overflowY: submitted ? "scroll" : "hidden",
+          }}
+        >
           {submitted && (
             <section className="flex flex-col space-y-4">
               {prompts.map((prompt) => (
                 <div key={prompt.id} className="flex flex-col space-y-5">
                   <div className="bg-gray-100 p-4 text-sm rounded-lg rounded-tr-none shadow-md self-end text-left w-max max-w-full break-words ml-auto max-w-[60%]">
-                    <strong className="text-green-500">You:</strong> {prompt.text}
+                    <strong className="text-green-500">You:</strong>{" "}
+                    {prompt.text}
                   </div>
                   {prompt.response && (
                     <div className="bg-gray-100 p-4 text-sm rounded-lg rounded-tl-none shadow-md self-start text-left w-max max-w-full break-words mr-auto max-w-[60%]">
-                      <strong className="text-purple-600">Bot:</strong> {prompt.response}
+                      <strong className="text-purple-600">Bot:</strong>{" "}
+                      {prompt.response}
                     </div>
                   )}
                 </div>
@@ -215,8 +226,8 @@ const ChatInterface: React.FC = () => {
         </div>
         <div className="w-full absolute bottom-0 left-0">
           <Form onSubmit={handleSubmit} disabled={isFetchingResponse} />
-          {!isFetchingResponse && prompts.length > 2 &&
-            (<div className="w-full flex justify-center items-center mb-5">
+          {!isFetchingResponse && prompts.length > 2 && (
+            <div className="w-full flex justify-center items-center mb-5">
               <button
                 className="bg-green-500 hover:bg-green-700 text-white flex items-center justify-between font-bold py-2 px-10 rounded"
                 onClick={getMermaidCodeResponse}
@@ -224,26 +235,71 @@ const ChatInterface: React.FC = () => {
                 Generate Solution
                 <CircleArrowRight size={24} color="#feffff" className="ml-3" />
               </button>
+            </div>
+          )}
 
-            </div>)
-          }
+          {!submitted && (
+            <div className="w-full flex justify-center items-center">
+              <div className="grid grid-cols-2 sm:mt-5 md:-mt-4 mb-5 gap-4 w-3/4">
+                <button
+                  className="h-10 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                  onClick={() =>
+                    handleSubmit(
+                      `Design the cloud architecture for a Real-Time Data Analytics Platform`
+                    )
+                  }
+                >
+                  <p className="text-xs text-gray-500">Cloud architecture</p>
+                </button>
+                <button
+                  className="h-10 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                  onClick={() =>
+                    handleSubmit(
+                      `Create a component diagram for a Microservices-based E-commerce Application`
+                    )
+                  }
+                >
+                  <p className="text-xs text-gray-500">Component</p>
+                </button>
+                <button
+                  className="h-10 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                  onClick={() =>
+                    handleSubmit(
+                      `Provide a sequence diagram for a Serverless Event-Driven Workflow`
+                    )
+                  }
+                >
+                  <p className="text-xs text-gray-500">Sequence</p>
+                </button>
+                <button
+                  className="h-10 text-center hover:pointer hover:bg-gray-100 shadow-md hover:shadow-lg border border-gray-400 rounded flex items-center justify-center transition-shadow duration-300"
+                  onClick={() =>
+                    handleSubmit(`Give me a design for a Scalable API Gateway`)
+                  }
+                >
+                  <p className="text-xs text-gray-500">Scalable API Gateway</p>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       {/* preview */}
-      {isFetchingMermaidCode ?
+      {isFetchingMermaidCode ? (
         <div className="w-2/3 h-full bg-gray-100 flex justify-center items-center">
           <div
             className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-success motion-reduce:animate-[spin_1.5s_linear_infinite]"
-            role="status">
-            <span
-              className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
-            >Loading...</span>
+            role="status"
+          >
+            <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+              Loading...
+            </span>
           </div>
         </div>
-        :
+      ) : (
         <>
-          {chart.length == 0 ?
+          {chart.length == 0 ? (
             <div className="w-2/3 h-full flex-col justify-center items-center">
               <Mermaid
                 graphDefinition={`
@@ -279,7 +335,7 @@ graph TD
                 setCount={setCount}
               />
             </div>
-            :
+          ) : (
             <div className="w-2/3 h-full flex justify-center items-center">
               <Mermaid
                 graphDefinition={chart}
@@ -288,14 +344,11 @@ graph TD
                 setCount={setCount}
               />
             </div>
-          }
-        </>}
-
+          )}
+        </>
+      )}
     </div>
   );
 };
-
-
-
 
 export default ChatInterface;
